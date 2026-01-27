@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post[1] }} - BloggerDev{% endblock %}
+
+{% block content %}
+<article class="card shadow-sm mb-4">
+    <div class="card-body">
+        <!-- Kategori ve Tarih -->
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <a href="{{ url_for('category', category_id=post[7]) }}" class="badge bg-primary text-decoration-none">
+                <i class="bi bi-folder me-1"></i>{{ post[6] if post[6] else 'Kategorisiz' }}
+            </a>
+            <small class="text-muted">
+                <i class="bi bi-calendar me-1"></i>
+                {{ post[3].strftime('%d.%m.%Y %H:%M') if post[3] else '-' }}
+            </small>
+        </div>
+        
+        <!-- Başlık -->
+        <h1 class="card-title mb-3">{{ post[1] }}</h1>
+        
+        <!-- Yazar -->
+        <div class="mb-4 pb-3 border-bottom">
+            <i class="bi bi-person-circle me-1 text-muted"></i>
+            {% if post[4] %}
+            <a href="{{ url_for('author', author_id=post[5]) }}" class="text-decoration-none">
+                {{ post[4] }}
+            </a>
+            {% else %}
+            <span class="text-muted">Anonim</span>
+            {% endif %}
+        </div>
+        
+        <!-- İçerik -->
+        <div class="post-content mb-4">
+            {{ post[2] | safe if post[2] else 'İçerik yok' }}
+        </div>
+        
+        <!-- Etiketler -->
+        {% if tags %}
+        <div class="mb-3">
+            <i class="bi bi-tags me-2 text-muted"></i>
+            {% for tag in tags %}
+            <a href="{{ url_for('tag', tag_id=tag[0]) }}" class="badge bg-secondary text-decoration-none me-1">
+                #{{ tag[1] }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</article>
+
+<!-- Yorumlar Bölümü -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">
+            <i class="bi bi-chat-dots me-2"></i>Yorumlar ({{ comments|length }})
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if comments %}
+            {% for comment in comments %}
+            <div class="d-flex mb-3 pb-3 border-bottom">
+                <div class="flex-shrink-0">
+                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 45px; height: 45px;">
+                        <i class="bi bi-person"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="mb-1">{{ comment[3] if comment[3] else 'Anonim' }}</h6>
+                        <small class="text-muted">
+                            {{ comment[2].strftime('%d.%m.%Y %H:%M') if comment[2] else '-' }}
+                        </small>
+                    </div>
+                    <p class="mb-0 text-muted">{{ comment[1] }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted mb-0">
+                <i class="bi bi-chat me-2"></i>Henüz yorum yapılmamış. İlk yorumu siz yapın!
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Geri Dön Butonu -->
+<div class="mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Ana Sayfaya Dön
+    </a>
+</div>
+{% endblock %}
