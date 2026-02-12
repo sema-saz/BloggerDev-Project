@@ -1259,7 +1259,7 @@ def open_comments_window():
                     SELECT c.comment_id, p.post_title, u.users_name, c.comment_content, c.comment_date
                     FROM dbo.Comments c
                     LEFT JOIN dbo.Post p ON c.post_id = p.post_id
-                    LEFT JOIN dbo.Users u ON c.user_id = u.users_id
+                    LEFT JOIN dbo.Users u ON c.users_id = u.users_id
                     WHERE c.post_id = ?
                     ORDER BY c.comment_date DESC
                 """, (post_id,))
@@ -1268,7 +1268,7 @@ def open_comments_window():
                     SELECT c.comment_id, p.post_title, u.users_name, c.comment_content, c.comment_date
                     FROM dbo.Comments c
                     LEFT JOIN dbo.Post p ON c.post_id = p.post_id
-                    LEFT JOIN dbo.Users u ON c.user_id = u.users_id
+                    LEFT JOIN dbo.Users u ON c.users_id = u.users_id
                     ORDER BY c.comment_date DESC
                 """)
             

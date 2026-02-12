@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Arama: {{ query }} - BloggerDev{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-text">
+            <h1 class="hero-title">Arama Sonuçları</h1>
+            <p class="hero-subtitle">"{{ query }}" için {{ posts|length }} sonuç bulundu</p>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="main-content">
+    <div class="content-container">
+        <!-- POSTS LIST -->
+        <div class="posts-section">
+            <div class="posts-list">
+                {% for post in posts %}
+                <a href="{{ url_for('post_detail', post_id=post.post_id) }}" class="post-card">
+                    <div class="post-icon">
+                        <span>{{ post.categories_name[0] if post.categories_name else 'B' }}</span>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">{{ post.categories_name or 'Genel' }}</span>
+                        <h3 class="post-title">{{ post.post_title }}</h3>
+                        <p class="post-excerpt">{{ post.post_content[:100] }}...</p>
+                        <div class="post-meta">
+                            <span>{{ post.users_name or 'Anonim' }}</span>
+                            <span>·</span>
+                            <span>{{ post.post_date.strftime('%d %B %Y') if post.post_date else '' }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <div style="text-align: center; padding: 60px 20px;">
+                    <h3 style="color: #2b1b46; margin-bottom: 10px;">Sonuç Bulunamadı</h3>
+                    <p style="color: #6a5a7a;">"{{ query }}" ile eşleşen yazı bulunamadı. Farklı bir arama deneyin.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Kategoriler</h3>
+                <ul class="category-list">
+                    {% for cat in categories %}
+                    <li>
+                        <a href="{{ url_for('category', category_id=cat.categories_id) }}">{{ cat.categories_name }}</a>
+                        <span class="category-count">{{ cat.post_count or 0 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

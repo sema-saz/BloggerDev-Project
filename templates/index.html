@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}BloggerDev - Ana Sayfa{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-text">
+            <h1 class="hero-title">Kod Yazmanın Ötesinde</h1>
+            <p class="hero-subtitle">Yazılım geliştirme, teknoloji trendleri ve kariyer hakkında derinlemesine içerikler</p>
+        </div>
+
+        <!-- FEATURED POST (İlk Yazı) -->
+        {% if posts and posts|length > 0 %}
+        {% set featured = posts[0] %}
+        <a href="{{ url_for('post_detail', post_id=featured.post_id) }}" class="featured-post">
+            <div class="featured-image" style="background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop');">
+                <span class="featured-badge">Öne Çıkan</span>
+            </div>
+            <div class="featured-content">
+                <span class="category-label">{{ featured.categories_name or 'Genel' }}</span>
+                <h2 class="featured-title">{{ featured.post_title }}</h2>
+                <p class="featured-excerpt">{{ featured.post_content[:200] }}...</p>
+                <div class="author-info">
+                    <div class="author-avatar">{{ featured.users_name[0] if featured.users_name else 'A' }}</div>
+                    <div>
+                        <p class="author-name">{{ featured.users_name or 'Anonim' }}</p>
+                        <p class="author-meta">{{ featured.post_date.strftime('%d %B %Y') if featured.post_date else '' }}</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="main-content">
+    <div class="content-container">
+        <!-- POSTS LIST -->
+        <div class="posts-section">
+            <div class="section-header">
+                <h2 class="section-title">Son Yazılar</h2>
+                <a href="#" class="view-all-link">
+                    Tümünü Gör
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+            
+            <div class="posts-list">
+                {% for post in posts[1:] if posts|length > 1 %}
+                <a href="{{ url_for('post_detail', post_id=post.post_id) }}" class="post-card">
+                    <div class="post-icon">
+                        <span>{{ post.categories_name[0] if post.categories_name else 'B' }}</span>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">{{ post.categories_name or 'Genel' }}</span>
+                        <h3 class="post-title">{{ post.post_title }}</h3>
+                        <p class="post-excerpt">{{ post.post_content[:100] }}...</p>
+                        <div class="post-meta">
+                            <span>{{ post.users_name or 'Anonim' }}</span>
+                            <span>·</span>
+                            <span>{{ post.post_date.strftime('%d %B %Y') if post.post_date else '' }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <p style="color: #6a5a7a; text-align: center; padding: 40px;">Henüz yazı bulunmuyor.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <!-- CATEGORIES -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Kategoriler</h3>
+                <ul class="category-list">
+                    {% for cat in categories %}
+                    <li>
+                        <a href="{{ url_for('category', category_id=cat.categories_id) }}">{{ cat.categories_name }}</a>
+                        <span class="category-count">{{ cat.post_count or 0 }}</span>
+                    </li>
+                    {% else %}
+                    <li>Kategori bulunamadı</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- NEWSLETTER -->
+            <div class="newsletter-card">
+                <div class="newsletter-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e9e8ec" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                <h3 class="newsletter-title">Bültene Abone Ol</h3>
+                <p class="newsletter-text">Yeni yazılardan haberdar olmak için e-posta adresinizi bırakın.</p>
+                <input type="email" class="newsletter-input" placeholder="E-posta adresiniz">
+                <button class="newsletter-btn">Abone Ol</button>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

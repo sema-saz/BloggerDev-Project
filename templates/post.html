@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.post_title }} - BloggerDev{% endblock %}
+
+{% block content %}
+<!-- ARTICLE HEADER -->
+<div class="article-header">
+    <div class="article-header-container">
+        <div class="article-badges">
+            <span class="badge">{{ post.categories_name or 'Genel' }}</span>
+            <span class="read-time">{{ ((post.post_content|length) / 1000)|int + 1 }} dk okuma</span>
+        </div>
+        
+        <h1 class="article-title">{{ post.post_title }}</h1>
+        
+        <div class="author-info-extended">
+            <a href="{{ url_for('author', author_id=post.users_id) }}" class="author-avatar large">{{ post.users_name[0] if post.users_name else 'A' }}</a>
+            <div>
+                <a href="{{ url_for('author', author_id=post.users_id) }}"><p class="author-name" style="font-size:16px;">{{ post.users_name or 'Anonim' }}</p></a>
+                <p class="author-meta" style="font-size:14px;">{{ post.post_date.strftime('%d %B %Y') if post.post_date else '' }}</p>
+            </div>
+            {% if current_user and post.users_id and current_user.users_id != post.users_id %}
+                {% if is_following %}
+                <form action="{{ url_for('unfollow_user', user_id=post.users_id) }}" method="POST" style="margin-left:auto;">
+                    <button type="submit" class="follow-btn following">Takip Ediyorsun</button>
+                </form>
+                {% else %}
+                <form action="{{ url_for('follow_user', user_id=post.users_id) }}" method="POST" style="margin-left:auto;">
+                    <button type="submit" class="follow-btn">Takip Et</button>
+                </form>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- ARTICLE CONTENT -->
+<article class="article-container">
+    <div class="article-body">
+        {{ post.post_content|safe }}
+    </div>
+
+    <!-- TAGS -->
+    {% if tags %}
+    <div class="tags-section">
+        <span class="tags-label">Etiketler:</span>
+        {% for tag in tags %}
+        <a href="{{ url_for('tag', tag_id=tag.tags_id) }}" class="tag">{{ tag.tag_name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- SHARE -->
+    <div class="share-section">
+        <span class="share-label">Bu yazıyı paylaş:</span>
+        <div class="share-buttons">
+            <button class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?url=' + window.location.href, '_blank')">Twitter</button>
+            <button class="share-btn" onclick="window.open('https://www.linkedin.com/shareArticle?url=' + window.location.href, '_blank')">LinkedIn</button>
+            <button class="share-btn" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + window.location.href, '_blank')">Facebook</button>
+        </div>
+    </div>
+
+    <!-- COMMENTS SECTION -->
+    <section class="comments-section">
+        <h3 class="comments-title">Yorumlar ({{ comments|length if comments else 0 }})</h3>
+        
+        <div class="comments-list">
+            {% for comment in comments %}
+            <div class="comment-card">
+                <div class="comment-header">
+                    <a href="{{ url_for('author', author_id=comment.users_id) if comment.users_id else '#' }}" class="comment-avatar">{{ comment.users_name[0] if comment.users_name else 'A' }}</a>
+                    <div>
+                        <p class="comment-author">{{ comment.users_name or 'Anonim' }}</p>
+                        <p class="comment-date">{{ comment.comment_date.strftime('%d %B %Y') if comment.comment_date else '' }}</p>
+                    </div>
+                </div>
+                <p class="comment-text">{{ comment.comment_content }}</p>
+            </div>
+            {% else %}
+            <p style="color: #6a5a7a; text-align: center; padding: 30px;">Henüz yorum yapılmamış. İlk yorumu siz yapın!</p>
+            {% endfor %}
+        </div>
+
+        <!-- COMMENT FORM -->
+        {% if current_user %}
+        <div class="comment-form">
+            <h4 class="comment-form-title">Yorum Yaz</h4>
+            <form action="{{ url_for('add_comment', post_id=post.post_id) }}" method="POST">
+                <textarea name="comment" class="comment-textarea" placeholder="Düşüncelerinizi paylaşın..." required></textarea>
+                <button type="submit" class="comment-submit">Yorum Gönder</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="comment-form" style="text-align:center;">
+            <p style="color:#6a5a7a;margin-bottom:15px;">Yorum yapmak için giriş yapmalısınız.</p>
+            <a href="{{ url_for('login') }}" class="follow-btn">Giriş Yap</a>
+        </div>
+        {% endif %}
+    </section>
+</article>
+{% endblock %}

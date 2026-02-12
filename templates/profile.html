@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.users_name }} - BloggerDev{% endblock %}
+
+{% block content %}
+<!-- PROFILE HEADER -->
+<div class="profile-header">
+    <div class="profile-header-container">
+        <div class="profile-avatar">{{ user.users_name[0] }}</div>
+        <div class="profile-info">
+            <h1>{{ user.users_name }}</h1>
+            <p class="profile-email">{{ user.users_email }}</p>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="profile-stat-value">{{ posts|length }}</div>
+                    <div class="profile-stat-label">Yazı</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">{{ followers_count }}</div>
+                    <div class="profile-stat-label">Takipçi</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">{{ following_count }}</div>
+                    <div class="profile-stat-label">Takip</div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-actions">
+            <a href="{{ url_for('edit_profile') }}" class="edit-profile-btn">Profili Düzenle</a>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE CONTENT -->
+<section class="main-content">
+    <div class="content-container">
+        <!-- POSTS -->
+        <div class="posts-section">
+            <div class="section-header">
+                <h2 class="section-title">Yazılarım</h2>
+            </div>
+            
+            <div class="posts-list">
+                {% for post in posts %}
+                <a href="{{ url_for('post_detail', post_id=post.post_id) }}" class="post-card">
+                    <div class="post-icon">
+                        <span>{{ post.categories_name[0] if post.categories_name else 'B' }}</span>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">{{ post.categories_name or 'Genel' }}</span>
+                        <h3 class="post-title">{{ post.post_title }}</h3>
+                        <p class="post-excerpt">{{ post.post_content[:100] }}...</p>
+                        <div class="post-meta">
+                            <span>{{ post.post_date.strftime('%d %B %Y') if post.post_date else '' }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <p style="color: #6a5a7a; text-align: center; padding: 40px;">Henüz yazınız bulunmuyor.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SIDEBAR - Following -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Takip Ettiklerim</h3>
+                {% if following %}
+                <ul class="category-list">
+                    {% for user in following %}
+                    <li>
+                        <a href="{{ url_for('author', author_id=user.users_id) }}" style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2b1b46,#4a3a66);display:flex;align-items:center;justify-content:center;color:#e9e8ec;font-size:12px;font-weight:600;">{{ user.users_name[0] }}</div>
+                            {{ user.users_name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p style="color: #8a7a9a; font-size: 14px;">Henüz kimseyi takip etmiyorsunuz.</p>
+                {% endif %}
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

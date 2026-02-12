@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ author.users_name }} - BloggerDev{% endblock %}
+
+{% block content %}
+<!-- PROFILE HEADER -->
+<div class="profile-header">
+    <div class="profile-header-container">
+        <div class="profile-avatar">{{ author.users_name[0] if author.users_name else 'A' }}</div>
+        <div class="profile-info">
+            <h1>{{ author.users_name }}</h1>
+            <p class="profile-email">{{ author.users_email }}</p>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="profile-stat-value">{{ posts|length }}</div>
+                    <div class="profile-stat-label">Yazı</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">{{ followers_count }}</div>
+                    <div class="profile-stat-label">Takipçi</div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-actions">
+            {% if current_user and current_user.users_id != author.users_id %}
+                {% if is_following %}
+                <form action="{{ url_for('unfollow_user', user_id=author.users_id) }}" method="POST">
+                    <button type="submit" class="follow-btn following" style="padding:12px 30px;">Takip Ediyorsun</button>
+                </form>
+                {% else %}
+                <form action="{{ url_for('follow_user', user_id=author.users_id) }}" method="POST">
+                    <button type="submit" class="follow-btn" style="padding:12px 30px;">Takip Et</button>
+                </form>
+                {% endif %}
+            {% elif not current_user %}
+            <a href="{{ url_for('login') }}" class="follow-btn" style="padding:12px 30px;">Takip Et</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<section class="main-content">
+    <div class="content-container">
+        <!-- POSTS LIST -->
+        <div class="posts-section">
+            <div class="section-header">
+                <h2 class="section-title">{{ author.users_name }} Yazıları</h2>
+            </div>
+            
+            <div class="posts-list">
+                {% for post in posts %}
+                <a href="{{ url_for('post_detail', post_id=post.post_id) }}" class="post-card">
+                    <div class="post-icon">
+                        <span>{{ post.categories_name[0] if post.categories_name else 'B' }}</span>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">{{ post.categories_name or 'Genel' }}</span>
+                        <h3 class="post-title">{{ post.post_title }}</h3>
+                        <p class="post-excerpt">{{ post.post_content[:100] }}...</p>
+                        <div class="post-meta">
+                            <span>{{ post.post_date.strftime('%d %B %Y') if post.post_date else '' }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <p style="color: #6a5a7a; text-align: center; padding: 40px;">Bu yazarın henüz yazısı bulunmuyor.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Kategoriler</h3>
+                <ul class="category-list">
+                    {% for cat in categories %}
+                    <li>
+                        <a href="{{ url_for('category', category_id=cat.categories_id) }}">{{ cat.categories_name }}</a>
+                        <span class="category-count">{{ cat.post_count or 0 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

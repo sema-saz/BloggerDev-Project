@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.categories_name }} - BloggerDev{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-text">
+            <h1 class="hero-title">{{ category.categories_name }}</h1>
+            <p class="hero-subtitle">Bu kategorideki tüm yazılar</p>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="main-content">
+    <div class="content-container">
+        <!-- POSTS LIST -->
+        <div class="posts-section">
+            <div class="section-header">
+                <h2 class="section-title">{{ posts|length }} Yazı Bulundu</h2>
+            </div>
+            
+            <div class="posts-list">
+                {% for post in posts %}
+                <a href="{{ url_for('post_detail', post_id=post.post_id) }}" class="post-card">
+                    <div class="post-icon">
+                        <span>{{ category.categories_name[0] }}</span>
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">{{ category.categories_name }}</span>
+                        <h3 class="post-title">{{ post.post_title }}</h3>
+                        <p class="post-excerpt">{{ post.post_content[:100] }}...</p>
+                        <div class="post-meta">
+                            <span>{{ post.users_name or 'Anonim' }}</span>
+                            <span>·</span>
+                            <span>{{ post.post_date.strftime('%d %B %Y') if post.post_date else '' }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <p style="color: #6a5a7a; text-align: center; padding: 40px;">Bu kategoride henüz yazı bulunmuyor.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Diğer Kategoriler</h3>
+                <ul class="category-list">
+                    {% for cat in categories %}
+                    <li>
+                        <a href="{{ url_for('category', category_id=cat.categories_id) }}" 
+                           style="{% if cat.categories_id == category.categories_id %}font-weight:700;{% endif %}">
+                            {{ cat.categories_name }}
+                        </a>
+                        <span class="category-count">{{ cat.post_count or 0 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

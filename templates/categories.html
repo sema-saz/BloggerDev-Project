@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Kategoriler - BloggerDev{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <h1>Kategoriler</h1>
+    <p>Tüm kategorileri keşfedin</p>
+</div>
+
+<!-- CATEGORIES GRID -->
+<div class="grid-container">
+    <div class="categories-grid">
+        {% for cat in all_categories %}
+        <a href="{{ url_for('category', category_id=cat.categories_id) }}" class="category-card">
+            <div class="category-card-icon">{{ cat.categories_name[0] }}</div>
+            <h3>{{ cat.categories_name }}</h3>
+            <p>{{ cat.categories_type or 'Blog yazıları' }}</p>
+            <span class="category-card-count">{{ cat.post_count }} yazı</span>
+        </a>
+        {% else %}
+        <p style="color: #6a5a7a; text-align: center; padding: 40px; grid-column: 1/-1;">Henüz kategori bulunmuyor.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

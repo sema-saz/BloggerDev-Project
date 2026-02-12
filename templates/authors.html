@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Yazarlar - BloggerDev{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <h1>Yazarlar</h1>
+    <p>Tüm yazarlarımızı keşfedin ve takip edin</p>
+</div>
+
+<!-- AUTHORS GRID -->
+<div class="grid-container">
+    <div class="authors-grid">
+        {% for author in all_authors %}
+        <div class="author-card">
+            <div class="author-card-header">
+                <a href="{{ url_for('author', author_id=author.users_id) }}" class="author-card-avatar">{{ author.users_name[0] }}</a>
+                <div class="author-card-info">
+                    <a href="{{ url_for('author', author_id=author.users_id) }}"><h3>{{ author.users_name }}</h3></a>
+                    <p>{{ author.users_email }}</p>
+                </div>
+            </div>
+            <div class="author-card-stats">
+                <div class="author-card-stat">
+                    <div class="author-card-stat-value">{{ author.post_count }}</div>
+                    <div class="author-card-stat-label">Yazı</div>
+                </div>
+                <div class="author-card-stat">
+                    <div class="author-card-stat-value">{{ author.followers_count }}</div>
+                    <div class="author-card-stat-label">Takipçi</div>
+                </div>
+            </div>
+            {% if current_user and current_user.users_id != author.users_id %}
+                {% if author.is_following %}
+                <form action="{{ url_for('unfollow_user', user_id=author.users_id) }}" method="POST" style="margin:0;">
+                    <button type="submit" class="follow-btn following" style="width:100%;">Takip Ediyorsun</button>
+                </form>
+                {% else %}
+                <form action="{{ url_for('follow_user', user_id=author.users_id) }}" method="POST" style="margin:0;">
+                    <button type="submit" class="follow-btn" style="width:100%;">Takip Et</button>
+                </form>
+                {% endif %}
+            {% elif not current_user %}
+            <a href="{{ url_for('login') }}" class="follow-btn" style="width:100%;display:block;text-align:center;">Takip Et</a>
+            {% endif %}
+        </div>
+        {% else %}
+        <p style="color: #6a5a7a; text-align: center; padding: 40px; grid-column: 1/-1;">Henüz yazar bulunmuyor.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
